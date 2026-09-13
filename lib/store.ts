@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ASSUMPTIONS } from "./assumptions";
+import { normalizeChannel } from "./channels";
 import { TOPIC_DEFINITIONS } from "./topics";
 import type { Inquiry, TopicDefinition } from "./types";
 import type { Workspace, WorkspaceSettings } from "./workspace-types";
@@ -48,7 +49,12 @@ function normalizeWorkspace(raw: unknown): Workspace {
     topics: Array.isArray(value.topics) && value.topics.length > 0
       ? value.topics
       : base.topics,
-    inquiries: Array.isArray(value.inquiries) ? value.inquiries : [],
+    inquiries: Array.isArray(value.inquiries)
+      ? value.inquiries.map((item) => ({
+          ...item,
+          channel: normalizeChannel(item.channel),
+        }))
+      : [],
   };
 }
 
@@ -80,10 +86,14 @@ export async function updateWorkspace(
 }
 
 export async function addInquiries(
-  incoming: Inquiry[],
+  incomingRaw: Inquiry[],
   mode: "append" | "replace",
 ): Promise<Workspace> {
   return updateWorkspace((current) => {
+    const incoming = incomingRaw.map((item) => ({
+      ...item,
+      channel: normalizeChannel(item.channel),
+    }));
     if (mode === "replace") {
       return { ...current, inquiries: incoming };
     }

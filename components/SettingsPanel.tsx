@@ -44,8 +44,8 @@ export function SettingsPanel({
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="rounded-2xl border border-line bg-surface p-5">
-        <h2 className="text-sm font-medium">{t("settingsNumbers")}</h2>
+      <div className="echo-panel">
+        <h2 className="font-serif text-xl">{t("settingsNumbers")}</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="text-xs text-muted">
             {t("companyName")}
@@ -57,7 +57,7 @@ export function SettingsPanel({
                   companyName: event.target.value,
                 }))
               }
-              className="mt-1 w-full rounded-lg border border-line bg-background px-2 py-1.5 text-sm text-foreground"
+              className="echo-field"
             />
           </label>
           <label className="text-xs text-muted">
@@ -72,7 +72,7 @@ export function SettingsPanel({
                   hourlyYen: Number(event.target.value) || 0,
                 }))
               }
-              className="mt-1 w-full rounded-lg border border-line bg-background px-2 py-1.5 text-sm text-foreground"
+              className="echo-field"
             />
           </label>
           <label className="text-xs text-muted">
@@ -87,7 +87,7 @@ export function SettingsPanel({
                   periodDays: Number(event.target.value) || 0,
                 }))
               }
-              className="mt-1 w-full rounded-lg border border-line bg-background px-2 py-1.5 text-sm text-foreground"
+              className="echo-field"
             />
           </label>
           <label className="text-xs text-muted">
@@ -104,7 +104,7 @@ export function SettingsPanel({
                   deflectionRate: Number(event.target.value) || 0,
                 }))
               }
-              className="mt-1 w-full rounded-lg border border-line bg-background px-2 py-1.5 text-sm text-foreground"
+              className="echo-field"
             />
           </label>
           <label className="text-xs text-muted">
@@ -119,15 +119,15 @@ export function SettingsPanel({
                   defaultHandleMinutes: Number(event.target.value) || 1,
                 }))
               }
-              className="mt-1 w-full rounded-lg border border-line bg-background px-2 py-1.5 text-sm text-foreground"
+              className="echo-field"
             />
           </label>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-line bg-surface p-5">
+      <div className="echo-panel">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-medium">{t("settingsTopics")}</h2>
+          <h2 className="font-serif text-xl">{t("settingsTopics")}</h2>
           <button
             type="button"
             onClick={() =>
@@ -150,14 +150,14 @@ export function SettingsPanel({
         <p className="mt-1 text-xs text-muted">{t("topicsHelp")}</p>
         <ul className="mt-3 flex flex-col gap-3">
           {topicDraft.map((topic, index) => (
-            <li key={topic.id} className="rounded-xl border border-line p-3">
+            <li key={topic.id} className="border-t border-line py-4 first:border-t-0">
               <div className="grid gap-2 sm:grid-cols-2">
                 <input
                   value={topic.title}
                   onChange={(event) =>
                     updateTopic(index, { title: event.target.value })
                   }
-                  className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
+                  className="echo-field"
                   placeholder={t("topicTitle")}
                 />
                 <input
@@ -165,7 +165,7 @@ export function SettingsPanel({
                   onChange={(event) =>
                     updateTopic(index, { suggestedDoc: event.target.value })
                   }
-                  className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
+                  className="echo-field"
                   placeholder={t("topicDoc")}
                 />
                 <input
@@ -173,7 +173,7 @@ export function SettingsPanel({
                   onChange={(event) =>
                     updateTopic(index, { category: event.target.value })
                   }
-                  className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
+                  className="echo-field"
                   placeholder={t("topicCategory")}
                 />
                 <input
@@ -186,7 +186,7 @@ export function SettingsPanel({
                         .filter(Boolean),
                     })
                   }
-                  className="rounded-lg border border-line bg-background px-2 py-1.5 text-sm"
+                  className="echo-field"
                   placeholder={t("topicKeywords")}
                 />
               </div>
@@ -210,7 +210,7 @@ export function SettingsPanel({
         type="button"
         disabled={busy}
         onClick={() => void save()}
-        className="self-start rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+        className="echo-btn self-start"
       >
         {busy ? t("saving") : t("saveSettings")}
       </button>

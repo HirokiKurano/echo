@@ -58,8 +58,8 @@ export function ImportPanel({
   }
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-5">
-      <h2 className="text-sm font-medium">{t("importTitle")}</h2>
+    <section className="echo-panel">
+      <h2 className="font-serif text-xl">{t("importTitle")}</h2>
       <p className="mt-1 text-xs text-muted">{t("importHelp")}</p>
       <textarea
         value={draft}
@@ -67,7 +67,7 @@ export function ImportPanel({
         rows={6}
         placeholder={t("importPlaceholder")}
         aria-label={t("importAria")}
-        className="mt-3 w-full resize-y rounded-xl border border-line bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted/60 focus:border-accent/50"
+        className="echo-field mt-4 min-h-[8rem] resize-y placeholder:text-muted/60"
       />
       <label className="mt-3 flex items-center gap-2 text-xs text-muted">
         <input
@@ -82,14 +82,14 @@ export function ImportPanel({
           type="button"
           disabled={busy}
           onClick={() => void applyRaw(draft)}
-          className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+          className="echo-btn"
         >
           {replace ? t("importReplaceBtn") : t("importAppendBtn")}
         </button>
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-foreground"
+          className="echo-btn-ghost"
         >
           {t("chooseFile")}
         </button>

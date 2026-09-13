@@ -20,25 +20,33 @@ export function RankingTable({
   const { locale, t } = useLocale();
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line">
-      <div className="grid grid-cols-[minmax(0,1.6fr)_4.5rem_5.5rem_6.5rem] gap-2 bg-surface px-4 py-3 text-xs text-muted">
+    <div className="border-t border-line">
+      <div className="grid grid-cols-[2.2rem_minmax(0,1.6fr)_4.5rem_5.5rem_6.5rem] gap-2 px-1 py-3 text-[11px] tracking-[0.12em] text-muted">
+        <span />
         <span>{t("colInquiry")}</span>
         <span>{t("colCount")}</span>
         <span>{t("colTime")}</span>
         <span>{t("colLoss")}</span>
       </div>
       <ul>
-        {topics.map((topic) => {
+        {topics.map((topic, index) => {
           const selected = topic.id === selectedId;
           return (
             <li key={topic.id} className="border-t border-line">
               <button
                 type="button"
                 onClick={() => onSelect(topic.id)}
-                className={`grid w-full grid-cols-[minmax(0,1.6fr)_4.5rem_5.5rem_6.5rem] items-center gap-2 px-4 py-3 text-left text-sm transition ${
-                  selected ? "bg-accent-soft" : "hover:bg-foreground/5"
+                className={`grid w-full grid-cols-[2.2rem_minmax(0,1.6fr)_4.5rem_5.5rem_6.5rem] items-center gap-2 px-1 py-3.5 text-left text-sm transition ${
+                  selected ? "bg-white/70" : "hover:bg-white/40"
                 }`}
               >
+                <span
+                  className={`font-display text-xs tracking-wider ${
+                    selected ? "text-accent" : "text-muted"
+                  }`}
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <span className="min-w-0">
                   <span className="block truncate font-medium">
                     {localizedTopicField(topic.id, "title", topic.title, locale)}

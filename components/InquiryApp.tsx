@@ -1,6 +1,7 @@
 "use client";
 
-import { analyzeInquiries } from "@/lib/analyze";
+import { analyzeInquiries, inquiriesInPeriod } from "@/lib/analyze";
+import { channelLabel, listBoardChannels, normalizeChannel } from "@/lib/channels";
 import {
   formatHoursValue,
   formatNumber,
@@ -19,6 +20,7 @@ import type { Inquiry, TopicDefinition } from "@/lib/types";
 import type { MessageKey } from "@/lib/messages";
 import type { Workspace, WorkspaceSettings } from "@/lib/workspace-types";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChannelDetail } from "./ChannelDetail";
 import { EchoMark } from "./EchoMark";
 import { ImportPanel } from "./ImportPanel";
 import { LanguageSwitch } from "./LanguageSwitch";
@@ -38,6 +40,7 @@ export function InquiryApp() {
   const [errorKey, setErrorKey] = useState<MessageKey | null>(null);
   const [tab, setTab] = useState<Tab>("board");
   const [selectedId, setSelectedId] = useState("");
+  const [channel, setChannel] = useState("");
   const [browserStash, setBrowserStash] = useState<Inquiry[] | null>(null);
 
   const load = useCallback(async () => {
@@ -60,21 +63,39 @@ export function InquiryApp() {
     }
   }, [load]);
 
+  const channels = useMemo(
+    () => (workspace ? listBoardChannels(workspace.inquiries) : []),
+    [workspace],
+  );
+
   const analysis = useMemo(() => {
     if (!workspace) return null;
-    return analyzeInquiries(
-      workspace.inquiries,
-      workspace.topics,
-      workspace.settings,
-    );
-  }, [workspace]);
+    const scoped = channel
+      ? workspace.inquiries.filter(
+          (item) => normalizeChannel(item.channel) === channel,
+        )
+      : workspace.inquiries;
+    return analyzeInquiries(scoped, workspace.topics, workspace.settings);
+  }, [workspace, channel]);
 
-  const selected = useMemo(
-    () =>
-      analysis?.topics.find((topic) => topic.id === selectedId) ??
-      analysis?.topics[0],
-    [analysis, selectedId],
-  );
+  const channelItems = useMemo(() => {
+    if (!workspace || !channel) return [];
+    return inquiriesInPeriod(
+      workspace.inquiries.filter(
+        (item) => normalizeChannel(item.channel) === channel,
+      ),
+      workspace.settings.periodDays,
+    ).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  }, [workspace, channel]);
+
+  const selected = useMemo(() => {
+    if (!analysis) return undefined;
+    if (selectedId) {
+      return analysis.topics.find((topic) => topic.id === selectedId);
+    }
+    if (channel) return undefined;
+    return analysis.topics[0];
+  }, [analysis, selectedId, channel]);
 
   const periodLabel = analysis
     ? analysis.periodDays > 0
@@ -113,54 +134,47 @@ export function InquiryApp() {
   const top = analysis.proposals[0];
 
   return (
-    <div className="mx-auto flex min-h-full max-w-6xl flex-col gap-8 px-5 py-8 sm:px-8 sm:py-10">
-      <header className="flex flex-col gap-5 border-b border-line pb-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <EchoMark className="h-6 w-6" />
-            <div>
-              <p className="font-display text-lg font-semibold tracking-wide">
-                ECHO
-              </p>
-              <p className="text-xs text-muted">{settings.companyName}</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <LanguageSwitch />
-            <nav className="flex flex-wrap gap-1 rounded-full border border-line p-1 text-xs">
-              {(
-                [
-                  ["board", t("tabBoard")],
-                  ["log", t("tabLog")],
-                  ["settings", t("tabSettings")],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setTab(id)}
-                  className={`rounded-full px-3 py-1.5 ${
-                    tab === id ? "bg-foreground text-background" : "text-muted"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </nav>
+    <div className="mx-auto flex min-h-full max-w-6xl flex-col gap-10 px-5 py-8 sm:px-10 sm:py-12">
+      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-6">
+        <div className="flex items-center gap-3">
+          <EchoMark className="h-8 w-8" />
+          <div>
+            <h1 className="font-display text-sm font-semibold tracking-[0.42em]">
+              ECHO
+            </h1>
           </div>
         </div>
-        <div className="max-w-2xl">
-          <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            {t("headline")}
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted">{t("intro")}</p>
+        <div className="flex flex-wrap items-center gap-6">
+          <LanguageSwitch />
+          <nav className="flex flex-wrap gap-5 text-[11px] tracking-[0.16em] text-muted">
+            {(
+              [
+                ["board", t("tabBoard")],
+                ["log", t("tabLog")],
+                ["settings", t("tabSettings")],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setTab(id)}
+                className={
+                  tab === id
+                    ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                    : "hover:text-foreground"
+                }
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
         </div>
       </header>
 
       {tab === "log" ? (
         <div className="flex flex-col gap-6">
           {browserStash ? (
-            <div className="rounded-xl border border-accent/30 px-4 py-3 text-sm">
+            <div className="border-l-2 border-accent bg-accent-soft/60 px-4 py-3 text-sm">
               <p>{t("stashNote")}</p>
               <button
                 type="button"
@@ -178,6 +192,8 @@ export function InquiryApp() {
           ) : null}
           <LogForm
             settings={settings}
+            channels={channels}
+            topics={workspace.topics}
             onCreate={async (inquiry) => {
               const next = await apiAddInquiries([inquiry], "append");
               setWorkspace(next);
@@ -209,19 +225,56 @@ export function InquiryApp() {
       ) : null}
 
       {tab === "board" ? (
-        empty ? (
-          <p className="rounded-2xl border border-dashed border-line px-5 py-10 text-center text-sm text-muted">
-            {t("emptyBoard")}
-          </p>
-        ) : (
+        <>
+          <nav
+            className="flex flex-wrap gap-5 text-[11px] tracking-[0.12em] text-muted"
+            aria-label={t("channel")}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setChannel("");
+                setSelectedId("");
+              }}
+              className={
+                channel === ""
+                  ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                  : "hover:text-foreground"
+              }
+            >
+              {t("channelAll")}
+            </button>
+            {channels.map((name) => (
+              <button
+                key={name}
+                type="button"
+                onClick={() => {
+                  setChannel(name);
+                  setSelectedId("");
+                }}
+                className={
+                  channel === name
+                    ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                    : "hover:text-foreground"
+                }
+              >
+                {channelLabel(name, locale)}
+              </button>
+            ))}
+          </nav>
+          {empty && !channel ? (
+            <p className="border border-dashed border-line px-5 py-16 text-center font-serif text-lg text-muted">
+              {t("emptyBoard")}
+            </p>
+          ) : (
           <>
-            <p className="text-xs text-muted">
+            <p className="label-kicker">
               {periodLabel} · {t("asOf", { date: analysis.asOf })} ·{" "}
               {t("storedCount", {
                 count: formatNumber(analysis.storedCount, locale),
               })}
             </p>
-            <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid gap-0 border-y border-line sm:grid-cols-2 lg:grid-cols-4">
               <Kpi
                 label={t("kpiCount")}
                 value={formatNumber(analysis.totalCount, locale)}
@@ -249,11 +302,9 @@ export function InquiryApp() {
             </section>
 
             {top ? (
-              <section className="rounded-2xl border border-accent/25 bg-accent-soft px-5 py-5 sm:px-6">
-                <p className="text-xs font-medium tracking-wide text-accent">
-                  {t("improvement")}
-                </p>
-                <p className="mt-2 text-lg font-medium leading-snug sm:text-xl">
+              <section className="border-l-2 border-accent bg-white/50 px-5 py-6 sm:px-7">
+                <p className="label-kicker text-accent">{t("improvement")}</p>
+                <p className="mt-3 font-serif text-2xl font-medium leading-snug sm:text-[1.7rem]">
                   {t("writeDoc", {
                     doc: localizedTopicField(
                       top.id,
@@ -279,8 +330,8 @@ export function InquiryApp() {
 
             <section className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
               <div className="min-w-0">
-                <div className="mb-3 flex items-end justify-between gap-3">
-                  <h2 className="text-sm font-medium">{t("rankingTitle")}</h2>
+                <div className="mb-4 flex items-end justify-between gap-3">
+                  <h2 className="font-serif text-xl">{t("rankingTitle")}</h2>
                   <p className="text-xs text-muted">{t("rankingHint")}</p>
                 </div>
                 <RankingTable
@@ -297,21 +348,34 @@ export function InquiryApp() {
                     setWorkspace(next);
                   }}
                 />
+              ) : channel ? (
+                <ChannelDetail
+                  name={channelLabel(channel, locale)}
+                  inquiries={channelItems}
+                  hours={analysis.totalHours}
+                  yen={analysis.totalYen}
+                  onDelete={async (id) => {
+                    const next = await apiDeleteInquiry(id);
+                    setWorkspace(next);
+                  }}
+                />
               ) : null}
             </section>
 
             <section>
-              <h2 className="mb-3 text-sm font-medium">{t("manualsTitle")}</h2>
+              <h2 className="mb-4 font-serif text-xl">{t("manualsTitle")}</h2>
               {analysis.proposals.length > 0 ? (
-                <ol className="grid gap-3 md:grid-cols-3">
+                <ol className="grid gap-0 border-t border-line md:grid-cols-3">
                   {analysis.proposals.map((topic, index) => (
-                    <li key={topic.id}>
+                    <li key={topic.id} className="border-b border-line md:border-r md:last:border-r-0">
                       <button
                         type="button"
                         onClick={() => setSelectedId(topic.id)}
-                        className="h-full w-full rounded-2xl border border-line bg-surface px-4 py-4 text-left transition hover:border-accent/40"
+                        className="h-full w-full px-5 py-6 text-left transition hover:bg-white/50"
                       >
-                        <p className="text-xs text-muted">#{index + 1}</p>
+                        <p className="font-display text-xs tracking-[0.2em] text-accent">
+                          {String(index + 1).padStart(2, "0")}
+                        </p>
                         <p className="mt-1 font-medium">
                           {localizedTopicField(
                             topic.id,
@@ -341,17 +405,18 @@ export function InquiryApp() {
                   ))}
                 </ol>
               ) : (
-                <p className="rounded-2xl border border-line px-4 py-6 text-sm text-muted">
+                <p className="border border-line px-4 py-8 text-sm text-muted">
                   {t("manualsEmpty")}
                 </p>
               )}
             </section>
           </>
-        )
+          )}
+        </>
       ) : null}
 
-      <footer className="rounded-2xl border border-line px-5 py-4 text-xs leading-relaxed text-muted">
-        <p className="font-medium text-foreground">{t("opsNotes")}</p>
+      <footer className="border-t border-line pt-6 text-xs leading-relaxed text-muted">
+        <p className="label-kicker text-foreground">{t("opsNotes")}</p>
         <ul className="mt-2 list-disc space-y-1 pl-4">
           <li>{t("opsStore")}</li>
           <li>{t("opsFormula", { period: periodLabel })}</li>
@@ -372,9 +437,9 @@ function Kpi({
   hint: string;
 }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface px-4 py-4">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-2 font-display text-2xl font-semibold tracking-tight">
+    <div className="border-b border-line px-5 py-6 sm:border-r lg:border-b-0 last:border-b-0">
+      <p className="label-kicker">{label}</p>
+      <p className="mt-3 font-display text-[1.7rem] font-semibold tracking-tight">
         {value}
       </p>
       <p className="mt-1 text-xs text-muted">{hint}</p>

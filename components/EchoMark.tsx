@@ -5,14 +5,13 @@ export function EchoMark({ className = "h-5 w-5" }: { className?: string }) {
       className={className}
       aria-hidden="true"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
     >
-      <path d="M14 11.2a6.2 6.2 0 0 1 0 9.6" />
-      <path d="M11.2 8.2a10.4 10.4 0 0 1 0 15.6" />
-      <path d="M8.4 5.4a14.4 14.4 0 0 1 0 21.2" />
-      <circle cx="19.4" cy="16" r="2.1" fill="currentColor" stroke="none" />
+      <rect width="32" height="32" fill="currentColor" className="text-foreground" />
+      <g stroke="#00a8c8" strokeWidth="1.4" strokeLinecap="square">
+        <path d="M12 10.6a6.4 6.4 0 0 1 0 10.8" />
+        <path d="M9 7.4a10.6 10.6 0 0 1 0 17.2" />
+      </g>
+      <rect x="18.4" y="14.4" width="3.2" height="3.2" fill="#eef6f8" />
     </svg>
   );
 }

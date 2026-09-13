@@ -1,3 +1,4 @@
+import { normalizeChannel } from "./channels";
 import { isAuthorized } from "@/lib/auth";
 import type { Inquiry } from "./types";
 
@@ -22,10 +23,9 @@ export function asInquiry(raw: unknown, fallbackMinutes: number): Inquiry | null
       typeof value.id === "string" && value.id
         ? value.id
         : crypto.randomUUID(),
-    channel:
-      typeof value.channel === "string" && value.channel.trim()
-        ? value.channel.trim()
-        : "#社内",
+    channel: normalizeChannel(
+      typeof value.channel === "string" ? value.channel : "",
+    ),
     author:
       typeof value.author === "string" && value.author.trim()
         ? value.author.trim()

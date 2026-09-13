@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Syne } from "next/font/google";
+import { Noto_Sans_JP, Shippori_Mincho, Syne } from "next/font/google";
 import "./globals.css";
 
 const sans = Noto_Sans_JP({
@@ -14,6 +14,12 @@ const display = Syne({
   weight: ["600", "700"],
 });
 
+const serif = Shippori_Mincho({
+  variable: "--font-mincho",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "ECHO — 社内問い合わせの渋滞",
   description:
@@ -24,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ja"
-      className={`${sans.variable} ${display.variable} h-full bg-background antialiased`}
+      className={`${sans.variable} ${display.variable} ${serif.variable} h-full bg-background antialiased`}
     >
       <body className="min-h-full bg-background font-sans text-foreground">
         {children}

@@ -21,11 +21,11 @@ export function PinGate({ onUnlocked }: { onUnlocked: () => void }) {
 
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col justify-center px-5 py-16">
-      <div className="mb-8 flex justify-end">
+      <div className="mb-10 flex justify-end">
         <LanguageSwitch />
       </div>
-      <h1 className="font-display text-2xl font-semibold">ECHO</h1>
-      <p className="mt-2 text-sm text-muted">{t("pinHelp")}</p>
+      <p className="font-display text-sm tracking-[0.42em]">ECHO</p>
+      <h1 className="mt-4 font-serif text-3xl font-medium">{t("pinHelp")}</h1>
       <input
         type="password"
         value={pin}
@@ -33,7 +33,7 @@ export function PinGate({ onUnlocked }: { onUnlocked: () => void }) {
         onKeyDown={(event) => {
           if (event.key === "Enter") void submit();
         }}
-        className="mt-6 rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-accent/50"
+        className="echo-field mt-8"
         placeholder="PIN"
         autoFocus
       />
@@ -41,7 +41,7 @@ export function PinGate({ onUnlocked }: { onUnlocked: () => void }) {
       <button
         type="button"
         onClick={() => void submit()}
-        className="mt-4 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+        className="echo-btn mt-8 self-start"
       >
         {t("pinEnter")}
       </button>

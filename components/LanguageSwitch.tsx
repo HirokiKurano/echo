@@ -7,7 +7,7 @@ export function LanguageSwitch() {
 
   return (
     <div
-      className="flex rounded-full border border-line p-0.5 text-xs"
+      className="flex items-center gap-2 font-display text-[11px] tracking-[0.22em]"
       role="group"
       aria-label={t("language")}
     >
@@ -15,21 +15,26 @@ export function LanguageSwitch() {
         type="button"
         aria-pressed={locale === "ja"}
         onClick={() => setLocale("ja")}
-        className={`rounded-full px-2.5 py-1 ${
-          locale === "ja" ? "bg-foreground text-background" : "text-muted"
-        }`}
+        className={
+          locale === "ja"
+            ? "text-foreground underline decoration-accent decoration-2 underline-offset-6"
+            : "text-muted"
+        }
       >
-        日本語
+        JA
       </button>
+      <span className="text-line">/</span>
       <button
         type="button"
         aria-pressed={locale === "en"}
         onClick={() => setLocale("en")}
-        className={`rounded-full px-2.5 py-1 ${
-          locale === "en" ? "bg-foreground text-background" : "text-muted"
-        }`}
+        className={
+          locale === "en"
+            ? "text-foreground underline decoration-accent decoration-2 underline-offset-6"
+            : "text-muted"
+        }
       >
-        English
+        EN
       </button>
     </div>
   );
