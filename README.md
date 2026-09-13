@@ -67,5 +67,3 @@ Vercel などのサーバーレスでは再起動でファイルが消えるこ�
 - React 19 / TypeScript / Tailwind CSS 4
 - 保存: サーバー上の JSON（`data/workspace.json`）
 - UI 文言: `lib/messages.ts`（ja / en）
-
-このリポジトリは当初 Spark という Todo アプリでしたが、上記の方向に作り替えています。
