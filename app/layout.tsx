@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { M_PLUS_2, Syne } from "next/font/google";
+import { Noto_Sans_JP, Syne } from "next/font/google";
 import "./globals.css";
 
-const sans = M_PLUS_2({
+const sans = Noto_Sans_JP({
   variable: "--font-mplus",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
 });
 
 const display = Syne({
@@ -15,14 +15,15 @@ const display = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Spark — Capture a thought.",
-  description: "The fastest place to capture a thought.",
+  title: "ECHO — 社内問い合わせの渋滞",
+  description:
+    "繰り返される社内問い合わせを集計し、マニュアル1本で減らせる時間を出す。",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="ja"
       className={`${sans.variable} ${display.variable} h-full bg-background antialiased`}
     >
       <body className="min-h-full bg-background font-sans text-foreground">

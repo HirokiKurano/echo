@@ -1,9 +1,12 @@
-import { TodoApp } from "@/components/TodoApp";
+import { InquiryApp } from "@/components/InquiryApp";
+import { LocaleProvider } from "@/components/LocaleProvider";
 
 export default function Home() {
   return (
     <main className="min-h-full">
-      <TodoApp />
+      <LocaleProvider>
+        <InquiryApp />
+      </LocaleProvider>
     </main>
   );
 }

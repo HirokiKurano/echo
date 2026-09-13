@@ -1,127 +1,71 @@
-# Spark
+# ECHO
 
-**The fastest place to capture a thought.**
+小さな会社向けに、**繰り返される社内問い合わせ**を記録して集計するアプリです。
 
-A minimal todo app: open it, type, press Enter. Capture comes first. Setup and organization do not.
+「業務システムを作りました」ではなく、会社の中で実際に起きている面倒（同じ質問が Slack に何度も流れる）を数字にして、**マニュアルを1本書くと何時間減るか**まで出します。
 
-The UI is English-only, dark, and quiet. The mark is a thin four-point spark next to the **SPARK** wordmark.
+画面は **日本語 / English** を切り替えできます。記録した本文そのものは翻訳しません。
 
-## What works now
+## なぜこれを作ったか
 
-- The input is focused as soon as the app opens
-- Enter adds a todo (empty input is ignored)
-- Checkbox toggles complete / incomplete
-- Delete (hover on desktop, easy to tap on mobile)
-- Today / Later / Done groups
-- Saves to `localStorage` and restores after reload
-- Dark theme, Syne for headings, M PLUS 2 for body and input
-- Compact **glance** card on the main screen (next open todos)
-- Glance page at `/widget` (clock + the same card)
-- **Pop out window** for a small desktop glance
-- On a phone: open the glance page, then Share → Add to Home Screen
+ありきたりな勤怠・経費・タスク管理から外して、企業向けポートフォリオとして刺さりやすい題材を選びました。
 
-No accounts, cloud sync, notifications, tags, billing, or native lock-screen widgets.
+候補はいくつかありましたが、個人でもデモが作れ、面接でも「で、いくら得するの？」に答えられるのは **社内問い合わせの渋滞** でした。
 
-## How to use
+いまの形は、ダミーのデモから始めて、自分で貼って使い、最後に **社内の1台で全員が同じ数字を見る** ところまで寄せています。
 
-1. Open the app
-2. Type
-3. Press Enter
+## できること
 
-There is no confirm dialog. Enter saves immediately.
+- **1件記録する** — 聞かれたその場で残す（Slack が無くても使える）
+- **まとめて取り込む** — Slack のコピー、csv / txt / JSON を追記（既存は消さない）
+- **ダッシュボード** — 何度も聞かれていることのランキング、推定損失時間・金額、先に書くべきマニュアル
+- **設定** — 会社名、時給、集計期間、自社キーワード（楽楽精算、freee など）
+- **日本語 / English** — 右上で切り替え。このブラウザに残る
+- **任意の共有 PIN** — 環境変数 `ECHO_ACCESS_PIN`
 
-| Action | How |
-| --- | --- |
-| Add | Type, then Enter |
-| Toggle done | Click or tap the checkbox |
-| Delete | Click or tap × |
-| Focus input | `Ctrl + Shift + Space` (Mac: `Cmd + Shift + Space`) |
-| Open glance | **Open glance** on the main screen, or go to `/widget` |
-| Desktop glance window | **Pop out window** |
-| Leave glance | **Back to Spark** |
+データはアプリを動かしている PC 上の `data/workspace.json` です。同じ社内 LAN の他の PC は、その URL を開けば同じ集計を見ます。クラウドには送りません。
 
-Today is incomplete todos added today. Later is incomplete todos from earlier days. Done is completed. There is no date picker.
+## 使い方
 
-The glance card shows up to three open todos. Completing one there updates the same `localStorage` list.
+1. [http://localhost:3000](http://localhost:3000) を開く
+2. **記録する** から問い合わせを1件入れるか、ログを貼って追記する
+3. **ダッシュボード** で「何度も聞かれていること」と、マニュアル1本の削減見込みを見る
+4. **設定** で時給とキーワードを自社向けに直す
+5. 相手に英語で見せるときは右上の **English**
 
-## Glance vs a real lock-screen widget
+以前このブラウザだけに残していた集計がある場合は、「記録する」に **社内データに取り込む** が出ます。
 
-The glance is a **web stand-in**, not an iOS WidgetKit or Android lock-screen widget.
-
-| This app can do | This app cannot do |
-| --- | --- |
-| Show a compact “what’s next” card | Sit on the phone lock screen |
-| Open as a small desktop window | Draw inside iOS / Android widget slots |
-| Be added to a phone Home Screen as a web page | Sync that Home Screen icon across the OS widget gallery |
-
-A real lock-screen widget would need a native iOS/Android app and shared storage (not browser `localStorage`). That is later work, not this MVP.
-
-If the right-hand preview ever opens `/widget?glance=1` with no input field, use **Back to Spark** or open [http://localhost:3000/](http://localhost:3000/).
-
-## Setup
-
-Project folder: `C:\Users\hirok\spark`
-
-With Node.js installed:
+## 立ち上げ
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). In Cursor, keep Simple Browser on the right to see UI updates as you edit.
+[http://localhost:3000](http://localhost:3000) を開きます。
 
-For everyday use, a production build is faster than the dev server:
+社内の1台（常時起動できる PC）で本番相当にするなら:
 
 ```bash
 npm run build
 npm start
 ```
 
-## Stack
+同じ Wi-Fi の他の PC は `http://そのPCのIP:3000` です。
 
-- Next.js 16 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Storage: browser `localStorage` (key: `spark.todos`)
+Vercel などのサーバーレスでは再起動でファイルが消えることがあります。小さな会社では社内 PC か、ディスクが残る VPS 向けです。
 
-Nothing is sent to a server. There is no sync across browsers or devices.
+## 注意
 
-Todo shape:
+- 実名の問い合わせは Git に上げないでください。`data/workspace.json` は無視設定済みです
+- 損失時間 = 対応分数 × 時給。年間は集計期間から換算します。仮定は設定で変えられます
+- テーマ分けは本文のキーワード一致です。本番の類似度クラスタに差し替える前提です
 
-```ts
-{
-  id: string;
-  title: string;
-  completed: boolean;
-  createdAt: string; // ISO 8601
-}
-```
+## 技術
 
-## Layout
+- Next.js 16（App Router）
+- React 19 / TypeScript / Tailwind CSS 4
+- 保存: サーバー上の JSON（`data/workspace.json`）
+- UI 文言: `lib/messages.ts`（ja / en）
 
-```
-app/page.tsx                 Main screen
-app/widget/page.tsx          Glance / lock-screen-style page
-app/icon.svg                 Tab icon (spark mark)
-app/layout.tsx               Fonts and shell
-components/TodoApp.tsx       Capture flow + lists
-components/TodoInput.tsx     Fast input
-components/TodoList.tsx      Today / Later / Done
-components/TodoItem.tsx      Toggle and delete
-components/LockWidget.tsx    Compact glance card
-components/WidgetLockScreen.tsx  Clock + glance card
-components/SparkMark.tsx     Logo mark
-lib/types.ts                 Todo type
-lib/storage.ts               localStorage read/write
-lib/glance.ts                Pop-out window helper
-```
-
-## Later
-
-Not in this MVP:
-
-- Phase 2: auth, Supabase sync, PWA, native widgets
-- Phase 3: global shortcuts, reminders, search, theme toggle
-- Phase 4: AI organization
+このリポジトリは当初 Spark という Todo アプリでしたが、上記の方向に作り替えています。
