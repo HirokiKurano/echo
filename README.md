@@ -61,3 +61,20 @@ Vercel などのサーバーレスでは再起動でファイルが消えるこ�
 - 保存: サーバー上の JSON（`data/workspace.json`）
 - UI 文言: `lib/messages.ts`（ja / en）
 - チャンネル表示: `lib/channels.ts`（保存は `#社内` / `#社外`、画面だけ言語で切り替え）
+
+## 資料
+
+| | |
+| --- | --- |
+| [対象ユーザー](docs/target-users.md) | 誰向けか、対象外 |
+| [要件定義](docs/requirements.md) | 機能・非機能・計算 |
+| [システム構成](docs/architecture.md) | 構成図、API、ファイル |
+| [データ設計](docs/data-model.md) | JSON の論理モデル（RDB なし） |
+| [スクリーンショット](docs/screenshots.md) | 主要画面 |
+| [テスト](docs/testing.md) | `npm test` と手動確認 |
+| [Design Decisions](docs/design-decisions.md) | 題材、JSON、キーワード、UI |
+
+```bash
+npm test
+```
+
