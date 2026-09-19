@@ -12,7 +12,7 @@
 
 ![Dashboard EN](./screenshots/dashboard-en.png)
 
-チャンネルは `#internal` / `#external`。記録本文は翻訳しません。
+チャンネルは `#internal` / `#external`。英語の画面文言はイギリス英語。記録本文は翻訳しません。
 
 ## 記録する
 

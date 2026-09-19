@@ -29,7 +29,7 @@ export function InquiryList({
             <span>
               {inquiry.author} · {channelLabel(inquiry.channel, locale)}
             </span>
-            <span>{formatTimestamp(inquiry.createdAt)}</span>
+            <span>{formatTimestamp(inquiry.createdAt, locale)}</span>
           </div>
           <p className="mt-1.5 text-sm leading-relaxed">{inquiry.text}</p>
           <div className="mt-1.5 flex items-center justify-between gap-2 text-xs text-muted">
