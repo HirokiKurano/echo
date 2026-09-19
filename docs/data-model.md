@@ -68,7 +68,7 @@ erDiagram
     {
       "id": "uuid",
       "channel": "#社内",
-      "author": "山田",
+      "author": "ジェームス",
       "text": "経費精算の期限はいつですか？",
       "createdAt": "2026-09-13T10:00:00.000Z",
       "responder": "総務",

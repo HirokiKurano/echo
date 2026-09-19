@@ -2,7 +2,7 @@ import type { Locale } from "./messages";
 import { TOPIC_LABELS } from "./messages";
 
 export function localeTag(locale: Locale): string {
-  return locale === "en" ? "en-US" : "ja-JP";
+  return locale === "en" ? "en-GB" : "ja-JP";
 }
 
 export function formatYen(value: number, locale: Locale = "ja"): string {
@@ -22,13 +22,16 @@ export function formatPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
 
-export function formatTimestamp(iso: string): string {
+export function formatTimestamp(iso: string, locale: Locale = "ja"): string {
   const date = new Date(iso);
   const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const month = String(jst.getUTCMonth() + 1).padStart(2, "0");
   const day = String(jst.getUTCDate()).padStart(2, "0");
   const hour = String(jst.getUTCHours()).padStart(2, "0");
   const minute = String(jst.getUTCMinutes()).padStart(2, "0");
+  if (locale === "en") {
+    return `${day}/${month} ${hour}:${minute}`;
+  }
   return `${month}/${day} ${hour}:${minute}`;
 }
 
